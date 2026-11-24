@@ -3,958 +3,1350 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IPBut • Controle de Frequência nos Cultos Dominicais</title>
-
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Chart.js via CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
-  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <title>IPBut — Controle de Frequência nos Cultos Dominicais</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
-          },
-          colors: {
-            ipbut: {
-              950: '#04261c',
-              900: '#0b4f3a',
-              800: '#0e5c44',
-              700: '#136f52',
-              600: '#178562',
-              500: '#10b981',
-              100: '#d1fae5',
-              50: '#ecfdf5',
-            },
-            gold: {
-              600: '#9a6d1c',
-              500: '#b48327',
-              400: '#d4a038',
-              100: '#fef3c7',
-              50: '#fffbeb',
-            }
-          }
-        }
-      }
-    };
-  </script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <style>
+    :root {
+      --bg: #f4f7f5;
+      --surface: #ffffff;
+      --surface-alt: #f8faf9;
+      --border: #e2e8e4;
+      --primary: #0f5c43;
+      --primary-dark: #093d2c;
+      --primary-light: #e6f2ee;
+      --accent: #d97706;
+      --accent-light: #fef3c7;
+      --accent-border: #fcd34d;
+      --text: #14221c;
+      --text-muted: #556960;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+      --info: #1d4ed8;
+      --info-bg: #dbeafe;
+      --shadow-sm: 0 1px 3px rgba(15, 92, 67, 0.06);
+      --shadow-md: 0 8px 24px rgba(15, 92, 67, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background-color: #f4f6f5;
-      color: #0f172a;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
-    .card-shadow {
-      box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+
+    /* Header */
+    .topbar {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #ffffff;
+      padding: 28px 24px 36px;
+      border-bottom: 4px solid var(--accent);
     }
-    .card-shadow-hover {
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
     }
-    .card-shadow-hover:hover {
+
+    .topbar-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.82);
+      margin-top: 3px;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #ffffff;
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+    }
+
+    .pill-dot.loading {
+      background: #fbbf24;
+      animation: pulse 1.2s infinite;
+    }
+
+    .pill-dot.offline {
+      background: #f87171;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    .btn-sync {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .btn-sync:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    /* Main Layout */
+    main {
+      padding: 0 24px 48px;
+      margin-top: -18px;
+    }
+
+    /* Config Banner (shown when CSV URL is not set yet) */
+    .config-banner {
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      border-left: 5px solid #d97706;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .config-banner-text {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .config-banner-text strong {
+      color: #92400e;
+      font-size: 0.92rem;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .config-banner-text p {
+      font-size: 0.82rem;
+      color: #78350f;
+    }
+
+    .config-banner-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      flex: 1;
+      min-width: 280px;
+      justify-content: flex-end;
+    }
+
+    .config-banner-form input {
+      flex: 1;
+      min-width: 220px;
+      padding: 8px 12px;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      background: #ffffff;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .kpi-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px -5px rgba(6, 57, 42, 0.08), 0 4px 10px -3px rgba(15, 23, 42, 0.05);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .kpi-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .kpi-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .kpi-value {
+      font-size: 1.95rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+
+    .kpi-sub {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-up {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .badge-down {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .badge-neutral {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-special {
+      background: var(--accent-light);
+      color: #92400e;
+      border: 1px solid var(--accent-border);
+    }
+
+    .badge-regular {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    /* Cards & Sections */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-subtitle {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+    }
+
+    .segmented button {
+      border: none;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .segmented button.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    select, input[type="text"], input[type="number"], input[type="date"], input[type="url"] {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 0.84rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .btn:hover {
+      background: var(--surface-alt);
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Chart Wrapper */
+    .chart-wrapper {
+      position: relative;
+      height: 340px;
+      width: 100%;
+    }
+
+    .chart-legend-note {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.79rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Two Column Split */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Table */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      text-align: left;
+    }
+
+    thead {
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #f9fbfa;
+    }
+
+    tbody tr.row-special {
+      background: #fffbeb;
+    }
+
+    tbody tr.row-special:hover {
+      background: #fef3c7;
+    }
+
+    .num-cell {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.94rem;
+    }
+
+    /* Insights & Special Events */
+    .insight-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .insight-item {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .insight-item.highlight {
+      background: #fffbeb;
+      border-color: var(--accent-border);
+    }
+
+    .insight-bullet {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .insight-item.highlight .insight-bullet {
+      background: var(--accent-light);
+      color: #b45309;
+    }
+
+    .insight-item h4 {
+      font-size: 0.89rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .insight-item p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Simulator */
+    .sim-box {
+      background: linear-gradient(180deg, #f6faf8 0%, #ffffff 100%);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .sim-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .sim-row input {
+      flex: 1;
+      min-width: 110px;
+    }
+
+    .sim-result {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    /* Comparison strip */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .compare-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: var(--surface-alt);
+    }
+
+    .compare-box.special {
+      background: #fffbeb;
+      border-color: var(--accent-border);
+    }
+
+    .compare-box span {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .compare-box strong {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .compare-box small {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding-top: 12px;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-  <!-- Toast de Notificação (Substitui alert/confirm) -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-  <!-- Cabeçalho Institucional -->
-  <header class="bg-gradient-to-br from-ipbut-950 via-ipbut-900 to-ipbut-800 text-white border-b border-ipbut-700/50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        
-        <!-- Identidade & Título -->
-        <div class="flex items-start sm:items-center gap-4">
-          <!-- Emblema Institucional -->
-          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 flex items-center justify-center shrink-0 shadow-inner">
-            <svg class="w-7 h-7 sm:w-8 sm:h-8 text-gold-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2v20" />
-              <path d="M5 8h14" />
-              <circle cx="12" cy="8" r="5" class="opacity-35" />
-            </svg>
-          </div>
-          <div>
-            <div class="flex flex-wrap items-center gap-2 mb-1">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gold-500/20 text-gold-100 border border-gold-400/35 tracking-wide uppercase">
-                Igreja Presbiteriana do Butantã
-              </span>
-              <span id="header-period-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-emerald-100 border border-white/15">
-                Agosto a Novembro de 2026 • 8 cultos registrados
-              </span>
-            </div>
-            <h1 class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              Controle de Frequência — Cultos Dominicais
-            </h1>
-            <p class="text-sm sm:text-base text-emerald-100/85 mt-1">
-              Data-Ida • IPBut
-            </p>
-          </div>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">IPBut</div>
+        <div>
+          <h1>Controle de Frequência — Cultos Dominicais</h1>
+          <p>Histórico consolidado de presença, eventos especiais e indicadores matutinos</p>
         </div>
-
-        <!-- Botões de Ação no Cabeçalho -->
-        <div class="flex flex-wrap items-center gap-3">
-          <button
-            id="btn-open-simulator"
-            type="button"
-            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gold-500 hover:bg-gold-400 text-ipbut-950 transition shadow-sm cursor-pointer"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Simular / Adicionar Contagem
-          </button>
-
-          <button
-            id="btn-export-csv"
-            type="button"
-            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition backdrop-blur-sm cursor-pointer"
-          >
-            <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
-            </svg>
-            Exportar CSV Consolidado
-          </button>
-        </div>
+      </div>
+      <div class="header-meta">
+        <span class="pill" id="syncStatusPill">
+          <span class="pill-dot" id="syncDot"></span>
+          <span id="syncStatusText">Base local carregada</span>
+        </span>
+        <span class="pill" id="headerPeriod">24/08/2026 – 22/11/2026</span>
+        <button class="btn-sync" id="btnRefreshNow" title="Buscar atualizações agora da planilha">
+          ↻ Atualizar dados
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- Conteúdo Principal -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
-
-    <!-- Banner de Governança e Contexto dos Dados -->
-    <div id="transparency-banner" class="bg-gold-50 border border-gold-400/45 rounded-2xl p-4 sm:px-5 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div class="flex items-start gap-3">
-        <div class="p-2 rounded-xl bg-gold-100 text-gold-600 shrink-0 mt-0.5 sm:mt-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div class="text-sm text-slate-700 leading-relaxed">
-          <span class="font-semibold text-slate-900">Governança & Contexto dos Dados:</span>
-          A base foi saneada e passou a contar com a coluna <strong>Observações</strong> para contextualizar oscilações atípicas — como o pico de <strong>181 pessoas em 15/11</strong> (<em>Batismo e festa das missões</em>) e a retração para <strong>118 pessoas em 22/11</strong> (<em>Feriado sexta-feira</em>).
-        </div>
+  <main class="container">
+    <!-- Banner de configuração rápida do link CSV (aparece apenas se o link ainda não estiver definido) -->
+    <section class="config-banner" id="configBanner" style="display: none;">
+      <div class="config-banner-text">
+        <strong>Conectar à Planilha Google Sheets (Atualização Automática)</strong>
+        <p>Cole abaixo o link <code>.csv</code> gerado em <em>Arquivo → Compartilhar → Publicar na web</em> (ou edite a variável <code>GOOGLE_SHEET_CSV_URL</code> no código para fixar para todos os visitantes).</p>
       </div>
-      <button
-        id="btn-filter-events-banner"
-        type="button"
-        class="self-start sm:self-center shrink-0 text-xs font-semibold text-gold-600 hover:text-amber-900 bg-white border border-gold-400/50 px-3 py-1.5 rounded-lg shadow-2xs transition cursor-pointer"
-      >
-        Destacar eventos especiais →
-      </button>
-    </div>
-
-    <!-- Cards de KPI (4 Indicadores Principais) -->
-    <section aria-label="Indicadores Principais" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-      
-      <!-- Card 1: Média Geral & Comparativo Regular -->
-      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 card-shadow card-shadow-hover flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Média Geral</span>
-          <span class="w-9 h-9 rounded-xl bg-ipbut-50 text-ipbut-700 flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </span>
-        </div>
-        <div class="mt-4">
-          <div class="flex items-baseline gap-2">
-            <span id="kpi-avg" class="font-display text-3xl font-extrabold text-slate-900">144,3</span>
-            <span class="text-sm font-medium text-slate-500">pessoas/culto</span>
-          </div>
-          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-            Regulares: <strong id="kpi-regular-avg" class="text-ipbut-800">142,5</strong> (<span id="kpi-regular-count">6</span> cultos) • Mediana: <strong id="kpi-median" class="text-slate-700">139,5</strong>
-          </p>
-        </div>
+      <div class="config-banner-form">
+        <input type="url" id="inputCsvUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv" />
+        <button class="btn btn-primary" id="btnSaveCsvUrl">Conectar CSV</button>
       </div>
-
-      <!-- Card 2: Maior Frequência (Recorde) -->
-      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 card-shadow card-shadow-hover flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Maior Frequência</span>
-          <span class="w-9 h-9 rounded-xl bg-gold-50 text-gold-600 flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-            </svg>
-          </span>
-        </div>
-        <div class="mt-4">
-          <div class="flex items-baseline gap-2">
-            <span id="kpi-max" class="font-display text-3xl font-extrabold text-ipbut-900">181</span>
-            <span id="kpi-max-date" class="text-sm font-medium text-slate-500">em 15/11/2026</span>
-          </div>
-          <div id="kpi-max-obs-wrap" class="mt-2">
-            <span id="kpi-max-obs" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gold-100 text-gold-600 border border-gold-400/40">
-              ★ Batismo e festa das missões
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3: Menor Frequência -->
-      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 card-shadow card-shadow-hover flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Menor Frequência</span>
-          <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-            </svg>
-          </span>
-        </div>
-        <div class="mt-4">
-          <div class="flex items-baseline gap-2">
-            <span id="kpi-min" class="font-display text-3xl font-extrabold text-slate-900">118</span>
-            <span id="kpi-min-date" class="text-sm font-medium text-slate-500">em 22/11/2026</span>
-          </div>
-          <div id="kpi-min-obs-wrap" class="mt-2">
-            <span id="kpi-min-obs" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-100/80 text-amber-800 border border-amber-300/60">
-              Feriado sexta-feira
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4: Último Culto Registrado -->
-      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 card-shadow card-shadow-hover flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Último Culto Registrado</span>
-          <span id="kpi-last-badge" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
-            -34,8%
-          </span>
-        </div>
-        <div class="mt-4">
-          <div class="flex items-baseline gap-2">
-            <span id="kpi-last" class="font-display text-3xl font-extrabold text-slate-900">118</span>
-            <span id="kpi-last-date" class="text-sm font-medium text-slate-500">em 22/11/2026</span>
-          </div>
-          <p id="kpi-last-diff" class="text-xs text-slate-600 font-medium mt-2">
-            -63 pessoas vs. pico de 15/11 (Feriado sexta-feira)
-          </p>
-        </div>
-      </div>
-
     </section>
 
-    <!-- Seção do Gráfico Principal -->
-    <section class="bg-white rounded-2xl border border-slate-200/80 card-shadow p-5 sm:p-6">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+    <!-- KPI Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Média Geral por Culto</span>
+          <div class="kpi-icon">👥</div>
+        </div>
+        <div class="kpi-value" id="kpiAvg">—</div>
+        <div class="kpi-sub">
+          <span class="badge badge-neutral" id="kpiMedian">Mediana: —</span>
+          <span id="kpiCountLabel">— cultos</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Último Culto Registrado</span>
+          <div class="kpi-icon">📅</div>
+        </div>
+        <div class="kpi-value" id="kpiLast">—</div>
+        <div class="kpi-sub" id="kpiLastSub">—</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Maior Frequência (Pico)</span>
+          <div class="kpi-icon">📈</div>
+        </div>
+        <div class="kpi-value" id="kpiMax">—</div>
+        <div class="kpi-sub" id="kpiMaxSub">—</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Menor Frequência</span>
+          <div class="kpi-icon">📉</div>
+        </div>
+        <div class="kpi-value" id="kpiMin">—</div>
+        <div class="kpi-sub" id="kpiMinSub">—</div>
+      </div>
+    </section>
+
+    <!-- Main Chart -->
+    <section class="card">
+      <div class="card-header">
         <div>
-          <h2 class="font-display text-lg sm:text-xl font-bold text-slate-900">
-            Evolução da Frequência Dominical
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Passe o cursor ou toque nos pontos para visualizar a variação entre domingos, responsável e observações especiais
-          </p>
+          <h2 class="card-title">Evolução da Frequência nos Cultos Matutinos</h2>
+          <p class="card-subtitle">Comparativo cronológico com linha de média geral e destaque para datas com observações especiais</p>
         </div>
-
-        <!-- Controles do Gráfico -->
-        <div class="flex flex-wrap items-center gap-2.5 self-start lg:self-auto">
-          <!-- Toggle Isolar Regulares vs Todos -->
-          <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200/70" role="group" aria-label="Escopo do Gráfico">
-            <button
-              id="btn-scope-all"
-              type="button"
-              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-ipbut-900 shadow-xs transition cursor-pointer"
-            >
-              Todos os Cultos
-            </button>
-            <button
-              id="btn-scope-regular"
-              type="button"
-              class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer"
-            >
-              Apenas Regulares
-            </button>
+        <div class="controls">
+          <div class="segmented" id="chartScopeToggle">
+            <button type="button" class="active" data-scope="all">Todos os Cultos</button>
+            <button type="button" data-scope="regular">Apenas Regulares</button>
           </div>
-
-          <!-- Alternar Linha vs Barras -->
-          <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200/70" role="group" aria-label="Tipo de Gráfico">
-            <button
-              id="btn-chart-line"
-              type="button"
-              class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-ipbut-900 shadow-xs transition cursor-pointer"
-            >
-              Linha & Área
-            </button>
-            <button
-              id="btn-chart-bar"
-              type="button"
-              class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer"
-            >
-              Barras
-            </button>
+          <div class="segmented" id="chartTypeToggle">
+            <button type="button" class="active" data-type="line">Linha &amp; Área</button>
+            <button type="button" data-type="bar">Barras</button>
           </div>
         </div>
       </div>
-
-      <!-- Legenda Customizada -->
-      <div class="flex flex-wrap items-center gap-5 text-xs text-slate-600 mb-4 pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-ipbut-700 inline-block"></span>
-          <span>Culto Regular</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-3.5 h-3.5 rotate-45 bg-gold-500 border border-white shadow-2xs inline-block"></span>
-          <span class="font-medium text-slate-800">Culto com Observação / Evento Especial</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-6 border-t-2 border-dashed border-gold-500 inline-block"></span>
-          <span>Média do Período (<strong id="legend-avg-val" class="text-slate-800">144,3</strong> pessoas)</span>
-        </div>
-        <div id="legend-sim-item" class="hidden items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-emerald-400 ring-2 ring-emerald-200 inline-block"></span>
-          <span class="font-medium text-emerald-800">Contagem Simulada</span>
-        </div>
+      <div class="chart-wrapper">
+        <canvas id="attendanceChart"></canvas>
       </div>
-
-      <!-- Container Responsivo do Canvas -->
-      <div class="relative w-full h-72 sm:h-80 lg:h-96">
-        <canvas id="frequencyChart"></canvas>
+      <div class="chart-legend-note">
+        <span class="legend-item"><span class="legend-dot" style="background: #0f5c43;"></span> Culto Dominical Regular</span>
+        <span class="legend-item"><span class="legend-dot" style="background: #d97706;"></span> Data com Observação / Evento Especial</span>
+        <span class="legend-item"><span class="legend-dot" style="background: #94a3b8;"></span> Linha tracejada: Média do recorte exibido</span>
       </div>
     </section>
 
-    <!-- Seção da Tabela Detalhada & Filtros -->
-    <section id="tabela-section" class="bg-white rounded-2xl border border-slate-200/80 card-shadow overflow-hidden">
-      
-      <!-- Cabeçalho e Barra de Filtros da Tabela -->
-      <div class="p-5 sm:p-6 border-b border-slate-200/80 space-y-4">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <!-- Table + Insights & Simulator -->
+    <section class="grid-2">
+      <!-- Data Table -->
+      <div class="card" style="margin-bottom: 0;">
+        <div class="card-header">
           <div>
-            <h2 class="font-display text-lg sm:text-xl font-bold text-slate-900">
-              Registro Auditável das Contagens
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-              Histórico consolidado com rastreabilidade de carimbos, valores brutos e observações especiais
-            </p>
+            <h2 class="card-title">Histórico Detalhado dos Registros</h2>
+            <p class="card-subtitle" id="tableSubtitle">Base consolidada com eventos especiais e notas de contagem</p>
           </div>
-
-          <!-- Filtro por Tipo de Ocorrência -->
-          <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-200/80 self-start lg:self-auto" role="group" aria-label="Filtrar por tipo de ocorrência">
-            <button type="button" data-occurrence="all" class="occurrence-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-ipbut-900 text-white shadow-2xs transition cursor-pointer">
-              Todos os cultos (8)
-            </button>
-            <button type="button" data-occurrence="regular" class="occurrence-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-200/70 transition cursor-pointer">
-              Apenas regulares (6)
-            </button>
-            <button type="button" data-occurrence="special" class="occurrence-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-200/70 transition cursor-pointer">
-              Com observações/eventos (2)
-            </button>
-          </div>
+          <button class="btn" id="btnExportCsv" title="Baixar tabela filtrada em CSV">⬇ Exportar CSV</button>
         </div>
 
-        <!-- Filtros por Mês e Busca por Responsável ou Observação -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
-          <!-- Pills de Mês -->
-          <div class="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filtrar por mês">
-            <button type="button" data-month="all" class="month-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-ipbut-900 text-white transition cursor-pointer">
-              Todos
-            </button>
-            <button type="button" data-month="08" class="month-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/70 transition cursor-pointer">
-              Agosto
-            </button>
-            <button type="button" data-month="09" class="month-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/70 transition cursor-pointer">
-              Setembro
-            </button>
-            <button type="button" data-month="10" class="month-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/70 transition cursor-pointer">
-              Outubro
-            </button>
-            <button type="button" data-month="11" class="month-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/70 transition cursor-pointer">
-              Novembro
-            </button>
-          </div>
+        <div class="controls" style="margin-bottom: 14px;">
+          <select id="filterMonth">
+            <option value="all">Todos os meses</option>
+          </select>
+          <select id="filterCategory">
+            <option value="all">Todos os tipos (Regular + Especial)</option>
+            <option value="special">Com evento/observação especial</option>
+            <option value="regular">Apenas cultos regulares</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="Buscar por responsável ou observação..." style="flex: 1; min-width: 170px;" />
+        </div>
 
-          <!-- Busca por Responsável ou Observação -->
-          <div class="relative w-full md:w-80">
-            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
-            </svg>
-            <input
-              id="search-query"
-              type="text"
-              placeholder="Buscar responsável ou observação..."
-              class="w-full pl-9 pr-8 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ipbut-600/30 focus:border-ipbut-600 transition"
-            />
-            <button
-              id="btn-clear-search"
-              type="button"
-              title="Limpar busca"
-              class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-            >
-              ✕
-            </button>
-          </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Total</th>
+                <th>Variação</th>
+                <th>Observações / Evento</th>
+                <th>Responsável</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody"></tbody>
+          </table>
         </div>
       </div>
 
-      <!-- Tabela Responsiva -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-50/90 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <th class="py-3.5 px-4 sm:px-6">Data</th>
-              <th class="py-3.5 px-4">Dia / Período</th>
-              <th class="py-3.5 px-4">Responsável pela Contagem</th>
-              <th class="py-3.5 px-4">Total de Pessoas</th>
-              <th class="py-3.5 px-4">Variação vs. Anterior</th>
-              <th class="py-3.5 px-4">Observações / Eventos Especiais</th>
-              <th class="py-3.5 px-4 sm:px-6 whitespace-nowrap">Registro Bruto / Carimbo</th>
-            </tr>
-          </thead>
-          <tbody id="records-table-body" class="divide-y divide-slate-100 text-sm">
-            <!-- Preenchido dinamicamente via JavaScript -->
-          </tbody>
-        </table>
-      </div>
+      <!-- Analysis & Simulator -->
+      <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div class="card-header" style="margin-bottom: 12px;">
+            <div>
+              <h2 class="card-title">Análise &amp; Eventos Especiais</h2>
+              <p class="card-subtitle">Impacto das datas atípicas e fatores sazonais</p>
+            </div>
+          </div>
 
-      <!-- Rodapé da Tabela -->
-      <div class="px-4 sm:px-6 py-3.5 bg-slate-50/70 border-t border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
-        <span id="table-footer-summary">Exibindo 8 de 8 cultos consolidados</span>
-        <span id="table-footer-total-sum" class="font-medium text-ipbut-900">Soma do recorte: 1.154 presenças acumuladas</span>
+          <div class="compare-grid" id="compareGrid"></div>
+
+          <div class="insight-list" id="dynamicInsights"></div>
+        </div>
+
+        <!-- Simulator -->
+        <div class="sim-box">
+          <strong style="font-size: 0.88rem; color: var(--primary-dark);">Simulador de Próximo Culto</strong>
+          <p style="font-size: 0.79rem; color: var(--text-muted); margin-top: 2px;">
+            Projete como a contagem do próximo domingo impacta a média histórica:
+          </p>
+          <div class="sim-row">
+            <input type="date" id="simDate" />
+            <input type="number" id="simCount" min="1" max="1000" value="150" placeholder="Qtd. pessoas" />
+            <button class="btn btn-primary" id="btnSimulate">Simular</button>
+            <button class="btn" id="btnResetSim" style="display: none;">Limpar</button>
+          </div>
+          <div class="sim-result" id="simOutput">
+            Informe uma projeção para calcular a nova média do período.
+          </div>
+        </div>
       </div>
     </section>
 
+    <footer>
+      IPBut — Igreja Presbiteriana do Butantã • Painel de Acompanhamento de Frequência Dominical (Sincronização Automática via Google Sheets)
+    </footer>
   </main>
 
-  <!-- Rodapé Institucional -->
-  <footer class="bg-white border-t border-slate-200/80 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-ipbut-700"></span>
-        <span><strong class="text-slate-700">IPBut</strong> • Igreja Presbiteriana do Butantã — Painel de Frequência Dominical</span>
-      </div>
-      <div>
-        Base consolidada (Ago–Nov/2026) • <span class="text-slate-700 font-medium">8 cultos saneados</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Modal Simulador / Adicionar Contagem Local -->
-  <div id="simulator-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-    <div class="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl overflow-hidden animate-fadeIn">
-      <div class="bg-ipbut-900 text-white px-6 py-4 flex items-center justify-between">
-        <div>
-          <h3 class="font-display font-bold text-base sm:text-lg">Simulador de Próximo Culto</h3>
-          <p class="text-xs text-emerald-200/85">Projete a frequência de 29/11/2026 e veja o impacto na média</p>
-        </div>
-        <button id="btn-close-modal" type="button" class="text-white/75 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <form id="simulator-form" class="p-6 space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label for="sim-date" class="block text-xs font-semibold text-slate-700 mb-1">Data do Culto</label>
-            <input
-              type="date"
-              id="sim-date"
-              value="2026-11-29"
-              required
-              class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-ipbut-600/30 focus:border-ipbut-600"
-            />
-          </div>
-          <div>
-            <label for="sim-count" class="block text-xs font-semibold text-slate-700 mb-1">Frequência Projetada</label>
-            <input
-              type="number"
-              id="sim-count"
-              min="1"
-              max="2000"
-              value="155"
-              required
-              class="w-full px-3 py-2 text-sm font-semibold text-ipbut-900 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-ipbut-600/30 focus:border-ipbut-600"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label for="sim-recorder" class="block text-xs font-semibold text-slate-700 mb-1">Responsável</label>
-            <input
-              type="text"
-              id="sim-recorder"
-              value="Simulação Diaconal"
-              required
-              class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-ipbut-600/30 focus:border-ipbut-600"
-            />
-          </div>
-          <div>
-            <label for="sim-observation" class="block text-xs font-semibold text-slate-700 mb-1">Observação (Opcional)</label>
-            <input
-              type="text"
-              id="sim-observation"
-              placeholder="Ex: Culto regular ou evento"
-              class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-ipbut-600/30 focus:border-ipbut-600"
-            />
-          </div>
-        </div>
-
-        <!-- Prévia Instantânea do Impacto -->
-        <div class="bg-ipbut-50/80 border border-ipbut-600/20 rounded-xl p-3.5 space-y-1.5">
-          <div class="text-xs font-semibold text-ipbut-900 flex items-center justify-between">
-            <span>Comparação com a Média Histórica:</span>
-            <span id="sim-preview-badge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">+1,2 pessoas</span>
-          </div>
-          <div class="flex items-baseline justify-between text-xs text-slate-600">
-            <span>Média histórica: <strong id="sim-current-avg">144,3</strong></span>
-            <span>Nova média projetada: <strong id="sim-preview-avg" class="text-ipbut-900 text-sm">145,4</strong></span>
-          </div>
-        </div>
-
-        <div class="flex items-center justify-end gap-2.5 pt-2">
-          <button
-            id="btn-reset-sim"
-            type="button"
-            class="hidden mr-auto text-xs font-semibold text-rose-600 hover:text-rose-700 px-3 py-2 rounded-xl hover:bg-rose-50 transition cursor-pointer"
-          >
-            Remover simulações
-          </button>
-          <button
-            type="button"
-            id="btn-cancel-modal"
-            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-ipbut-900 hover:bg-ipbut-700 text-white shadow-xs transition cursor-pointer"
-          >
-            Aplicar ao Painel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Lógica da Aplicação -->
   <script>
-    /**
-     * Base de dados saneada e atualizada (8 cultos consolidados de agosto a novembro de 2026)
-     * Remoção do envio preliminar duplicado de 01/11/2026, inclusão de 22/11/2026
-     * e incorporação da coluna "Observações" para eventos especiais.
-     */
-    const BASE_RECORDS = [
+    // =========================================================================
+    // CONFIGURAÇÃO DA PLANILHA GOOGLE SHEETS (LINK FIXO)
+    // =========================================================================
+    // 1. No Google Sheets: Arquivo > Compartilhar > Publicar na web
+    // 2. Escolha a aba de respostas e o formato "Valores separados por vírgula (.csv)"
+    // 3. Cole a URL gerada entre as aspas abaixo e faça commit no GitHub:
+    const GOOGLE_SHEET_CSV_URL = "";
+
+    // Dados iniciais embutidos (fallback caso a planilha ainda não tenha sido vinculada ou esteja offline)
+    const FALLBACK_RECORDS = [
       {
-        id: 1,
-        dateISO: '2026-08-24',
-        dateBR: '24/08/2026',
-        month: '08',
-        serviceType: 'Culto Dominical Matutino',
-        count: 144,
-        recorder: 'Regilene',
-        rawValue: '144',
-        timestamp: '2026-08-24 16:23:17',
-        observation: '',
-        isSimulated: false
+        timestamp: "2026-08-24 16:23:17",
+        nome: "Regilene",
+        data: "2026-08-24",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 144,
+        rawTotal: "144",
+        obs: ""
       },
       {
-        id: 2,
-        dateISO: '2026-09-13',
-        dateBR: '13/09/2026',
-        month: '09',
-        serviceType: 'Culto Dominical Matutino',
-        count: 151,
-        recorder: 'Bruno',
-        rawValue: '151',
-        timestamp: '2026-09-13 10:14:49',
-        observation: '',
-        isSimulated: false
+        timestamp: "2026-09-13 10:14:49",
+        nome: "Bruno",
+        data: "2026-09-13",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 151,
+        rawTotal: "151",
+        obs: ""
       },
       {
-        id: 3,
-        dateISO: '2026-10-18',
-        dateBR: '18/10/2026',
-        month: '10',
-        serviceType: 'Culto Dominical Matutino',
-        count: 159,
-        recorder: 'Alcides',
-        rawValue: '159',
-        timestamp: '2026-10-18 10:12:41',
-        observation: '',
-        isSimulated: false
+        timestamp: "2026-10-18 10:12:41",
+        nome: "Alcides",
+        data: "2026-10-18",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 159,
+        rawTotal: "159",
+        obs: ""
       },
       {
-        id: 4,
-        dateISO: '2026-10-25',
-        dateBR: '25/10/2026',
-        month: '10',
-        serviceType: 'Culto Dominical Matutino',
-        count: 135,
-        recorder: 'Wolfgang Fischer',
-        rawValue: '135',
-        timestamp: '2026-10-25 10:04:44',
-        observation: '',
-        isSimulated: false
+        timestamp: "2026-10-25 10:04:44",
+        nome: "Wolfgang Fischer",
+        data: "2026-10-25",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 135,
+        rawTotal: "135",
+        obs: ""
       },
       {
-        id: 5,
-        dateISO: '2026-11-01',
-        dateBR: '01/11/2026',
-        month: '11',
-        serviceType: 'Culto Dominical Matutino',
-        count: 131,
-        recorder: 'Alcides',
-        rawValue: '131 (9:57 - atualização)',
-        timestamp: '2026-11-01 09:57:59',
-        observation: '',
-        isSimulated: false
+        timestamp: "2026-11-01 09:57:59",
+        nome: "Alcides",
+        data: "2026-11-01",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 131,
+        rawTotal: "131 (9:57 - atualização)",
+        obs: ""
       },
       {
-        id: 6,
-        dateISO: '2026-11-08',
-        dateBR: '08/11/2026',
-        month: '11',
-        serviceType: 'Culto Dominical Matutino',
-        count: 135,
-        recorder: 'Matheus De Angeli',
-        rawValue: '135',
-        timestamp: '2026-11-08 10:02:40',
-        observation: '',
-        isSimulated: false
+        timestamp: "2026-11-08 10:02:40",
+        nome: "Matheus De Angeli",
+        data: "2026-11-08",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 135,
+        rawTotal: "135",
+        obs: ""
       },
       {
-        id: 7,
-        dateISO: '2026-11-15',
-        dateBR: '15/11/2026',
-        month: '11',
-        serviceType: 'Culto Dominical Matutino',
-        count: 181,
-        recorder: 'Ida',
-        rawValue: '181',
-        timestamp: '2026-11-15 10:37:34',
-        observation: 'Batismo e festa das missões',
-        isSimulated: false
+        timestamp: "2026-11-15 10:37:34",
+        nome: "Ida",
+        data: "2026-11-15",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 181,
+        rawTotal: "181",
+        obs: "Batismo e festa das missões"
       },
       {
-        id: 8,
-        dateISO: '2026-11-22',
-        dateBR: '22/11/2026',
-        month: '11',
-        serviceType: 'Culto Dominical Matutino',
-        count: 118,
-        recorder: 'Wolf',
-        rawValue: '118',
-        timestamp: '2026-11-23 09:58:17',
-        observation: 'Feriado sexta-feira',
-        isSimulated: false
+        timestamp: "2026-11-23 09:58:17",
+        nome: "Wolf",
+        data: "2026-11-22",
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: 118,
+        rawTotal: "118",
+        obs: "Feriado sexta-feira"
       }
     ];
 
-    // Estado reativo da aplicação
-    const appState = {
-      simulatedRecords: [],
-      chartType: 'line',       // 'line' | 'bar'
-      chartScope: 'all',       // 'all' | 'regular'
-      occurrenceFilter: 'all', // 'all' | 'regular' | 'special'
-      selectedMonth: 'all',    // 'all' | '08' | '09' | '10' | '11'
-      searchQuery: ''
+    let BASE_RECORDS = [...FALLBACK_RECORDS];
+    let chartInstance = null;
+    let currentChartType = "line";
+    let currentChartScope = "all";
+    let simulatedEntry = null;
+
+    const MONTH_NAMES = {
+      "01": "Janeiro", "02": "Fevereiro", "03": "Março", "04": "Abril",
+      "05": "Maio", "06": "Junho", "07": "Julho", "08": "Agosto",
+      "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro"
     };
 
-    let frequencyChartInstance = null;
+    const MONTH_SHORT = {
+      "01": "Jan", "02": "Fev", "03": "Mar", "04": "Abr",
+      "05": "Mai", "06": "Jun", "07": "Jul", "08": "Ago",
+      "09": "Set", "10": "Out", "11": "Nov", "12": "Dez"
+    };
 
-    // Utilitários de formatação PT-BR
-    function formatNumberBR(num, decimals = 1) {
-      return num.toLocaleString('pt-BR', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-      });
+    // =========================================================================
+    // PARSER CSV E SINCRONIZAÇÃO COM GOOGLE SHEETS
+    // =========================================================================
+    function getActiveCsvUrl() {
+      if (GOOGLE_SHEET_CSV_URL && GOOGLE_SHEET_CSV_URL.trim() !== "") {
+        return GOOGLE_SHEET_CSV_URL.trim();
+      }
+      const saved = localStorage.getItem("ipbut_csv_url");
+      return saved ? saved.trim() : "";
     }
 
-    function formatIntBR(num) {
-      return Math.round(num).toLocaleString('pt-BR');
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], cell = "", inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i], next = text[i + 1];
+        if (ch === '"' && inQuotes && next === '"') {
+          cell += '"';
+          i++;
+        } else if (ch === '"') {
+          inQuotes = !inQuotes;
+        } else if (ch === "," && !inQuotes) {
+          row.push(cell.trim());
+          cell = "";
+        } else if ((ch === "\n" || (ch === "\r" && next === "\n")) && !inQuotes) {
+          if (ch === "\r") i++;
+          row.push(cell.trim());
+          if (row.some(c => c !== "")) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += ch;
+        }
+      }
+      if (cell !== "" || row.length > 0) {
+        row.push(cell.trim());
+        if (row.some(c => c !== "")) rows.push(row);
+      }
+      return rows;
     }
 
-    function isoToBR(isoStr) {
-      const [y, m, d] = isoStr.split('-');
+    // Normaliza datas em YYYY-MM-DD ou DD/MM/YYYY para YYYY-MM-DD
+    function normalizeDateStr(raw) {
+      if (!raw) return "";
+      const clean = raw.trim().split(" ")[0];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) return clean;
+      const brMatch = clean.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (brMatch) {
+        const d = brMatch[1].padStart(2, "0");
+        const m = brMatch[2].padStart(2, "0");
+        const y = brMatch[3];
+        return `${y}-${m}-${d}`;
+      }
+      return clean;
+    }
+
+    function setSyncStatus(state, text) {
+      const dot = document.getElementById("syncDot");
+      const label = document.getElementById("syncStatusText");
+      dot.className = "pill-dot" + (state === "loading" ? " loading" : state === "offline" ? " offline" : "");
+      label.textContent = text;
+    }
+
+    async function loadLiveRecords() {
+      const csvUrl = getActiveCsvUrl();
+      const banner = document.getElementById("configBanner");
+
+      if (!csvUrl) {
+        banner.style.display = "flex";
+        setSyncStatus("offline", "Aguardando link CSV (exibindo base local)");
+        return;
+      }
+
+      banner.style.display = "none";
+      setSyncStatus("loading", "Sincronizando planilha...");
+
+      try {
+        const separator = csvUrl.includes("?") ? "&" : "?";
+        const response = await fetch(`${csvUrl}${separator}t=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+
+        if (rows.length < 2) throw new Error("Planilha sem registros válidos");
+
+        // Mapeamento das colunas da planilha:
+        // [0] Carimbo de data/hora | [1] Informe seu nome | [2] Data | [3] Tipo
+        // [4] Indique qual foi o evento | [5] Total de pessoas | [6] Observações
+        const parsed = rows.slice(1)
+          .filter(r => r[2] && r[5])
+          .map(r => {
+            const matchTotal = String(r[5]).match(/\d+/);
+            const normDate = normalizeDateStr(r[2]);
+            const colEvento = (r[4] || "").trim();
+            const colObs = (r[6] || "").trim();
+            // Combina observação e evento caso ambos existam
+            const combinedObs = [colObs, colEvento].filter(Boolean).join(" • ");
+
+            return {
+              timestamp: (r[0] || "").trim(),
+              nome: (r[1] || "Não informado").trim(),
+              data: normDate,
+              tipo: (r[3] || "Culto Dominical Matutino").trim(),
+              evento: colEvento,
+              total: matchTotal ? parseInt(matchTotal[0], 10) : 0,
+              rawTotal: String(r[5]).trim(),
+              obs: combinedObs
+            };
+          })
+          .filter(item => item.data && item.total > 0);
+
+        if (parsed.length === 0) throw new Error("Nenhum registro numérico encontrado");
+
+        // Deduplica por data: mantém sempre o registro mais recente enviado para aquele domingo
+        const byDate = new Map();
+        parsed.forEach(item => byDate.set(item.data, item));
+
+        BASE_RECORDS = Array.from(byDate.values()).sort((a, b) => a.data.localeCompare(b.data));
+
+        const nowTime = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+        setSyncStatus("ok", `Sincronizado às ${nowTime} (${BASE_RECORDS.length} cultos)`);
+
+        populateMonthFilter();
+        updateDefaultSimDate();
+        renderAll();
+      } catch (err) {
+        console.error("Erro ao sincronizar planilha Google Sheets:", err);
+        setSyncStatus("offline", "Falha ao ler CSV — exibindo base local");
+      }
+    }
+
+    // =========================================================================
+    // FORMATAÇÃO E CÁLCULOS DO PAINEL
+    // =========================================================================
+    function formatDateBR(iso) {
+      if (!iso || !iso.includes("-")) return iso;
+      const [y, m, d] = iso.split("-");
       return `${d}/${m}/${y}`;
     }
 
-    function hasSpecialObservation(record) {
-      return Boolean(record.observation && record.observation.trim().length > 0);
+    function formatShortDate(iso) {
+      if (!iso || !iso.includes("-")) return iso;
+      const [, m, d] = iso.split("-");
+      return `${d}/${MONTH_SHORT[m] || m}`;
     }
 
-    // Exibe mensagem discreta (Toast) sem utilizar alert()
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      const bgClass = type === 'success'
-        ? 'bg-ipbut-900 text-white border-ipbut-700'
-        : 'bg-slate-800 text-white border-slate-700';
+    function hasSpecialNote(rec) {
+      return Boolean((rec.obs && rec.obs.trim().length > 0) || (rec.evento && rec.evento.trim().length > 0));
+    }
 
-      toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-lg text-xs sm:text-sm font-medium transition-all duration-300 ${bgClass}`;
-      toast.innerHTML = `
-        <span class="w-2 h-2 rounded-full bg-gold-400 shrink-0"></span>
-        <span>${message}</span>
+    function getActiveDataset() {
+      const list = [...BASE_RECORDS].sort((a, b) => a.data.localeCompare(b.data));
+      if (simulatedEntry) {
+        list.push(simulatedEntry);
+      }
+      return list;
+    }
+
+    function computeMedian(values) {
+      if (!values.length) return 0;
+      const sorted = [...values].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      return sorted.length % 2 !== 0
+        ? sorted[mid]
+        : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    function populateMonthFilter() {
+      const select = document.getElementById("filterMonth");
+      const currentVal = select.value;
+      const months = new Set(BASE_RECORDS.map(r => r.data.slice(0, 7)));
+
+      select.innerHTML = '<option value="all">Todos os meses</option>';
+      Array.from(months).sort().forEach(ym => {
+        const [y, m] = ym.split("-");
+        const opt = document.createElement("option");
+        opt.value = ym;
+        opt.textContent = `${MONTH_NAMES[m] || m} / ${y}`;
+        select.appendChild(opt);
+      });
+
+      if (Array.from(months).includes(currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    function updateDefaultSimDate() {
+      if (!BASE_RECORDS.length) return;
+      const lastIso = BASE_RECORDS[BASE_RECORDS.length - 1].data;
+      const [y, m, d] = lastIso.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      dt.setDate(dt.getDate() + 7);
+      const nextIso = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+      document.getElementById("simDate").value = nextIso;
+    }
+
+    function updateKPIs(data) {
+      if (!data.length) return;
+      const totals = data.map(d => d.total);
+      const sum = totals.reduce((acc, v) => acc + v, 0);
+      const avg = sum / data.length;
+      const median = computeMedian(totals);
+
+      const firstDate = formatDateBR(data[0].data);
+      const lastDate = formatDateBR(data[data.length - 1].data);
+      document.getElementById("headerPeriod").textContent = `${firstDate} – ${lastDate}`;
+
+      document.getElementById("kpiAvg").textContent = avg.toLocaleString("pt-BR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      });
+      document.getElementById("kpiMedian").textContent = `Mediana: ${median.toLocaleString("pt-BR")}`;
+      document.getElementById("kpiCountLabel").textContent = `${data.length} cultos`;
+
+      const last = data[data.length - 1];
+      const prev = data.length > 1 ? data[data.length - 2] : null;
+      document.getElementById("kpiLast").textContent = last.total;
+
+      if (prev) {
+        const diff = last.total - prev.total;
+        const pct = ((diff / prev.total) * 100).toFixed(1).replace(".", ",");
+        const sign = diff >= 0 ? "+" : "";
+        const badgeClass = diff >= 0 ? "badge-up" : "badge-down";
+        const noteTag = hasSpecialNote(last) ? ` • ${last.obs}` : "";
+        document.getElementById("kpiLastSub").innerHTML = `
+          <span class="badge ${badgeClass}">${sign}${diff} (${sign}${pct}%)</span>
+          <span>em ${formatDateBR(last.data)}${noteTag}</span>
+        `;
+      } else {
+        document.getElementById("kpiLastSub").textContent = `Registrado em ${formatDateBR(last.data)}`;
+      }
+
+      const maxItem = data.reduce((a, b) => (b.total > a.total ? b : a));
+      document.getElementById("kpiMax").textContent = maxItem.total;
+      document.getElementById("kpiMaxSub").innerHTML = hasSpecialNote(maxItem)
+        ? `<span class="badge badge-special">${maxItem.obs}</span> <span>(${formatDateBR(maxItem.data)})</span>`
+        : `<span>Em ${formatDateBR(maxItem.data)} (${maxItem.nome})</span>`;
+
+      const minItem = data.reduce((a, b) => (b.total < a.total ? b : a));
+      document.getElementById("kpiMin").textContent = minItem.total;
+      document.getElementById("kpiMinSub").innerHTML = hasSpecialNote(minItem)
+        ? `<span class="badge badge-special">${minItem.obs}</span> <span>(${formatDateBR(minItem.data)})</span>`
+        : `<span>Em ${formatDateBR(minItem.data)} (${minItem.nome})</span>`;
+    }
+
+    function updateComparisonAndInsights(data) {
+      const regulars = data.filter(d => !hasSpecialNote(d));
+      const specials = data.filter(d => hasSpecialNote(d));
+
+      const regAvg = regulars.length
+        ? (regulars.reduce((s, x) => s + x.total, 0) / regulars.length).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+        : "—";
+      const specAvg = specials.length
+        ? (specials.reduce((s, x) => s + x.total, 0) / specials.length).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+        : "—";
+
+      document.getElementById("compareGrid").innerHTML = `
+        <div class="compare-box">
+          <span>Cultos Regulares (${regulars.length})</span>
+          <strong>${regAvg} <small style="font-weight:500;">pessoas/culto</small></strong>
+          <small>Base sem eventos atípicos</small>
+        </div>
+        <div class="compare-box special">
+          <span>Datas com Obs. Especial (${specials.length})</span>
+          <strong>${specAvg} <small style="font-weight:500;">pessoas/culto</small></strong>
+          <small>${specials.length ? specials.map(s => formatShortDate(s.data)).join(" e ") : "Nenhuma registrada"}</small>
+        </div>
       `;
-      container.appendChild(toast);
 
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(8px)';
-        setTimeout(() => toast.remove(), 300);
-      }, 3200);
-    }
+      const insights = [];
+      const maxItem = data.reduce((a, b) => (b.total > a.total ? b : a));
+      const minItem = data.reduce((a, b) => (b.total < a.total ? b : a));
 
-    // Retorna toda a série cronológica consolidada (com variação calculada vs culto anterior)
-    function getFullChronologicalSeries() {
-      const combined = [...BASE_RECORDS, ...appState.simulatedRecords].sort((a, b) => {
-        if (a.dateISO !== b.dateISO) return a.dateISO.localeCompare(b.dateISO);
-        return a.id - b.id;
-      });
-
-      return combined.map((item, idx) => {
-        const prev = idx > 0 ? combined[idx - 1] : null;
-        const diff = prev ? item.count - prev.count : null;
-        const pct = prev && prev.count > 0 ? (diff / prev.count) * 100 : null;
-        return {
-          ...item,
-          isSpecial: hasSpecialObservation(item),
-          diff,
-          pct,
-          prevDateBR: prev ? prev.dateBR : null
-        };
-      });
-    }
-
-    // Aplica os filtros ativos (mês, ocorrência e busca) sobre a série
-    function getFilteredSeries() {
-      const fullSeries = getFullChronologicalSeries();
-      return fullSeries.filter(item => {
-        const matchesMonth = appState.selectedMonth === 'all' || item.month === appState.selectedMonth;
-        const matchesOccurrence =
-          appState.occurrenceFilter === 'all' ||
-          (appState.occurrenceFilter === 'regular' && !item.isSpecial) ||
-          (appState.occurrenceFilter === 'special' && item.isSpecial);
-
-        const q = appState.searchQuery.trim().toLowerCase();
-        const matchesSearch =
-          !q ||
-          item.recorder.toLowerCase().includes(q) ||
-          item.observation.toLowerCase().includes(q) ||
-          item.dateBR.includes(q);
-
-        return matchesMonth && matchesOccurrence && matchesSearch;
-      });
-    }
-
-    // Calcula métricas sobre um conjunto de registros
-    function calculateMetrics(series) {
-      if (!series.length) return null;
-
-      const counts = series.map(s => s.count);
-      const totalSum = counts.reduce((acc, v) => acc + v, 0);
-      const avg = totalSum / counts.length;
-
-      const sortedCounts = [...counts].sort((a, b) => a - b);
-      const mid = Math.floor(sortedCounts.length / 2);
-      const median = sortedCounts.length % 2 !== 0
-        ? sortedCounts[mid]
-        : (sortedCounts[mid - 1] + sortedCounts[mid]) / 2;
-
-      const regularRecords = series.filter(s => !s.isSpecial);
-      const regularAvg = regularRecords.length
-        ? regularRecords.reduce((acc, v) => acc + v.count, 0) / regularRecords.length
-        : avg;
-
-      let maxRecord = series[0];
-      let minRecord = series[0];
-      series.forEach(s => {
-        if (s.count > maxRecord.count) maxRecord = s;
-        if (s.count < minRecord.count) minRecord = s;
-      });
-
-      const lastRecord = series[series.length - 1];
-
-      return {
-        count: series.length,
-        totalSum,
-        avg,
-        median,
-        regularCount: regularRecords.length,
-        regularAvg,
-        maxRecord,
-        minRecord,
-        lastRecord
-      };
-    }
-
-    // Atualiza os Cards de KPI e contadores dos botões de filtro
-    function renderKPIs() {
-      const fullSeries = getFullChronologicalSeries();
-      const filteredSeries = getFilteredSeries();
-      const activeSeries = filteredSeries.length > 0 ? filteredSeries : fullSeries;
-      const metrics = calculateMetrics(activeSeries);
-
-      // Badge do cabeçalho
-      document.getElementById('header-period-badge').textContent =
-        `Agosto a Novembro de 2026 • ${fullSeries.length} cultos registrados`;
-
-      // Contadores nos botões de ocorrência
-      const regTotal = fullSeries.filter(r => !r.isSpecial).length;
-      const specTotal = fullSeries.filter(r => r.isSpecial).length;
-      document.querySelector('[data-occurrence="all"]').textContent = `Todos os cultos (${fullSeries.length})`;
-      document.querySelector('[data-occurrence="regular"]').textContent = `Apenas regulares (${regTotal})`;
-      document.querySelector('[data-occurrence="special"]').textContent = `Com observações/eventos (${specTotal})`;
-
-      // KPI 1: Média Geral + Regulares + Mediana
-      document.getElementById('kpi-avg').textContent = formatNumberBR(metrics.avg, 1);
-      document.getElementById('kpi-regular-avg').textContent = formatNumberBR(metrics.regularAvg, 1);
-      document.getElementById('kpi-regular-count').textContent = metrics.regularCount;
-      document.getElementById('kpi-median').textContent = formatNumberBR(metrics.median, metrics.median % 1 === 0 ? 0 : 1);
-
-      // KPI 2: Maior Frequência
-      document.getElementById('kpi-max').textContent = formatIntBR(metrics.maxRecord.count);
-      document.getElementById('kpi-max-date').textContent = `em ${metrics.maxRecord.dateBR}`;
-      const maxObsEl = document.getElementById('kpi-max-obs');
-      if (metrics.maxRecord.isSpecial) {
-        maxObsEl.textContent = `★ ${metrics.maxRecord.observation}`;
-        maxObsEl.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gold-100 text-gold-600 border border-gold-400/40';
-      } else {
-        maxObsEl.textContent = `Culto regular • Resp.: ${metrics.maxRecord.recorder}`;
-        maxObsEl.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-600';
+      if (hasSpecialNote(maxItem)) {
+        insights.push({
+          highlight: true,
+          icon: "★",
+          title: `Pico histórico: ${maxItem.obs} (${formatDateBR(maxItem.data)})`,
+          desc: `Atingiu ${maxItem.total} presentes, superando a média dos cultos regulares (${regAvg}) e consolidando o maior público do período.`
+        });
       }
 
-      // KPI 3: Menor Frequência
-      document.getElementById('kpi-min').textContent = formatIntBR(metrics.minRecord.count);
-      document.getElementById('kpi-min-date').textContent = `em ${metrics.minRecord.dateBR}`;
-      const minObsEl = document.getElementById('kpi-min-obs');
-      if (metrics.minRecord.isSpecial) {
-        minObsEl.textContent = metrics.minRecord.observation;
-        minObsEl.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-100/80 text-amber-800 border border-amber-300/60';
-      } else {
-        minObsEl.textContent = `Culto regular • Resp.: ${metrics.minRecord.recorder}`;
-        minObsEl.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-600';
+      if (hasSpecialNote(minItem)) {
+        insights.push({
+          highlight: true,
+          icon: "!",
+          title: `Impacto de calendário: ${minItem.obs} (${formatDateBR(minItem.data)})`,
+          desc: `Registrou ${minItem.total} pessoas — variação esperada pela viagem/ausência de membros durante o feriado prolongado.`
+        });
       }
 
-      // KPI 4: Último Culto Registrado
-      document.getElementById('kpi-last').textContent = formatIntBR(metrics.lastRecord.count);
-      document.getElementById('kpi-last-date').textContent = `em ${metrics.lastRecord.dateBR}`;
-
-      const badgeEl = document.getElementById('kpi-last-badge');
-      const diffEl = document.getElementById('kpi-last-diff');
-
-      if (metrics.lastRecord.diff !== null) {
-        const sign = metrics.lastRecord.diff >= 0 ? '+' : '';
-        const pctFormatted = `${sign}${formatNumberBR(metrics.lastRecord.pct, 1)}%`;
-        badgeEl.textContent = pctFormatted;
-
-        if (metrics.lastRecord.diff >= 0) {
-          badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
-          diffEl.className = 'text-xs text-emerald-700 font-medium mt-2';
-        } else {
-          badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200';
-          diffEl.className = 'text-xs text-slate-600 font-medium mt-2';
-        }
-
-        const contextSuffix = metrics.lastRecord.isSpecial
-          ? ` (${metrics.lastRecord.observation})`
-          : '';
-        const refLabel = metrics.lastRecord.prevDateBR === '15/11/2026' ? 'pico de 15/11' : `culto de ${metrics.lastRecord.prevDateBR.slice(0, 5)}`;
-        diffEl.textContent = `${sign}${metrics.lastRecord.diff} pessoas vs. ${refLabel}${contextSuffix}`;
-      } else {
-        badgeEl.textContent = 'Base';
-        diffEl.textContent = 'Primeiro culto do recorte selecionado';
-      }
-
-      // Legenda de simulação
-      const simLegend = document.getElementById('legend-sim-item');
-      if (appState.simulatedRecords.length > 0) {
-        simLegend.classList.remove('hidden');
-        simLegend.classList.add('flex');
-      } else {
-        simLegend.classList.add('hidden');
-        simLegend.classList.remove('flex');
-      }
-    }
-
-    // Renderiza / Atualiza o Gráfico Principal (Chart.js)
-    function renderChart() {
-      const ctx = document.getElementById('frequencyChart').getContext('2d');
-      const baseSeries = getFullChronologicalSeries();
-      const chartSeries = appState.chartScope === 'regular'
-        ? baseSeries.filter(s => !s.isSpecial)
-        : baseSeries;
-
-      const metrics = calculateMetrics(chartSeries);
-      document.getElementById('legend-avg-val').textContent = formatNumberBR(metrics.avg, 1);
-
-      const labels = chartSeries.map(s => s.dateBR);
-      const dataValues = chartSeries.map(s => s.count);
-      const avgLineValues = chartSeries.map(() => Number(metrics.avg.toFixed(1)));
-
-      // Destaque visual diferenciado para eventos especiais (losango dourado) vs regulares
-      const pointColors = chartSeries.map(s => {
-        if (s.isSimulated) return '#10b981';
-        if (s.isSpecial) return '#b48327';
-        return '#136f52';
+      insights.push({
+        highlight: false,
+        icon: "✓",
+        title: "Estabilidade da congregação regular",
+        desc: `Excluindo os eventos atípicos, a frequência regular mantém média de ${regAvg} pessoas, com núcleo consistente entre 131 e 159 participantes.`
       });
 
-      const pointStyles = chartSeries.map(s => (s.isSpecial ? 'rectRot' : 'circle'));
-      const pointRadii = chartSeries.map(s => (s.isSpecial || s.isSimulated ? 8 : 5.5));
+      document.getElementById("dynamicInsights").innerHTML = insights.map(item => `
+        <div class="insight-item ${item.highlight ? "highlight" : ""}">
+          <div class="insight-bullet">${item.icon}</div>
+          <div>
+            <h4>${item.title}</h4>
+            <p>${item.desc}</p>
+          </div>
+        </div>
+      `).join("");
+    }
 
-      const areaGradient = ctx.createLinearGradient(0, 0, 0, 340);
-      areaGradient.addColorStop(0, 'rgba(11, 79, 58, 0.22)');
-      areaGradient.addColorStop(1, 'rgba(11, 79, 58, 0.01)');
+    function renderChart(fullData) {
+      const data = currentChartScope === "regular"
+        ? fullData.filter(d => !hasSpecialNote(d))
+        : fullData;
 
-      if (frequencyChartInstance) {
-        frequencyChartInstance.destroy();
+      const ctx = document.getElementById("attendanceChart").getContext("2d");
+      const labels = data.map(d => formatShortDate(d.data));
+      const values = data.map(d => d.total);
+      const avg = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+      const avgSeries = data.map(() => Number(avg.toFixed(1)));
+
+      const pointColors = data.map(d => {
+        if (d.isSimulated) return "#1d4ed8";
+        if (hasSpecialNote(d)) return "#d97706";
+        return "#0f5c43";
+      });
+
+      const barColors = data.map(d => {
+        if (d.isSimulated) return "rgba(29, 78, 216, 0.85)";
+        if (hasSpecialNote(d)) return "rgba(217, 119, 6, 0.85)";
+        return "rgba(15, 92, 67, 0.85)";
+      });
+
+      const pointRadii = data.map(d => (hasSpecialNote(d) || d.isSimulated ? 7 : 5));
+      const pointStyles = data.map(d => (hasSpecialNote(d) ? "rectRot" : "circle"));
+
+      if (chartInstance) {
+        chartInstance.destroy();
       }
 
-      const isBar = appState.chartType === 'bar';
+      const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+      gradient.addColorStop(0, "rgba(15, 92, 67, 0.22)");
+      gradient.addColorStop(1, "rgba(15, 92, 67, 0.01)");
 
-      frequencyChartInstance = new Chart(ctx, {
-        type: isBar ? 'bar' : 'line',
+      chartInstance = new Chart(ctx, {
+        type: currentChartType,
         data: {
           labels,
           datasets: [
             {
-              label: 'Público Presente',
-              data: dataValues,
-              backgroundColor: isBar
-                ? chartSeries.map(s => (s.isSimulated ? '#10b981' : s.isSpecial ? '#b48327' : '#136f52'))
-                : areaGradient,
-              borderColor: '#0b4f3a',
-              borderWidth: isBar ? 0 : 3,
-              borderRadius: isBar ? 10 : 0,
-              maxBarThickness: 54,
-              fill: !isBar,
-              tension: 0.34,
-              pointStyle: pointStyles,
+              label: "Total de Pessoas",
+              data: values,
+              borderColor: "#0f5c43",
+              backgroundColor: currentChartType === "line" ? gradient : barColors,
+              borderWidth: currentChartType === "line" ? 3 : 1,
+              borderRadius: currentChartType === "bar" ? 8 : 0,
+              fill: currentChartType === "line",
+              tension: 0.28,
               pointBackgroundColor: pointColors,
-              pointBorderColor: '#ffffff',
-              pointBorderWidth: 2.5,
+              pointBorderColor: "#ffffff",
+              pointBorderWidth: 2,
               pointRadius: pointRadii,
-              pointHoverRadius: 9.5,
-              pointHoverBorderWidth: 3,
-              order: 2
+              pointHoverRadius: 9,
+              pointStyle: pointStyles
             },
             {
-              label: `Média do Período (${formatNumberBR(metrics.avg, 1)})`,
-              data: avgLineValues,
-              type: 'line',
-              borderColor: '#b48327',
+              label: `Média do Recorte (${avg.toFixed(1).replace(".", ",")})`,
+              data: avgSeries,
+              type: "line",
+              borderColor: "#94a3b8",
               borderWidth: 2,
               borderDash: [6, 6],
               pointRadius: 0,
               pointHoverRadius: 0,
-              fill: false,
-              order: 1
+              fill: false
             }
           ]
         },
@@ -962,90 +1354,70 @@
           responsive: true,
           maintainAspectRatio: false,
           interaction: {
-            mode: 'index',
+            mode: "index",
             intersect: false
           },
           plugins: {
             legend: {
-              display: false
+              display: true,
+              position: "top",
+              align: "end",
+              labels: {
+                usePointStyle: true,
+                boxWidth: 8,
+                font: { family: "Inter", size: 12, weight: "600" }
+              }
             },
             tooltip: {
-              backgroundColor: '#04261c',
-              titleColor: '#fef3c7',
-              bodyColor: '#f8fafc',
-              borderColor: 'rgba(180, 131, 39, 0.55)',
-              borderWidth: 1,
-              padding: 13,
-              cornerRadius: 12,
-              displayColors: false,
-              titleFont: {
-                family: 'Plus Jakarta Sans, sans-serif',
-                size: 13,
-                weight: '700'
-              },
-              bodyFont: {
-                family: 'Inter, sans-serif',
-                size: 12
-              },
+              backgroundColor: "#14221c",
+              titleFont: { family: "Inter", size: 13, weight: "700" },
+              bodyFont: { family: "Inter", size: 12 },
+              padding: 12,
+              cornerRadius: 10,
               callbacks: {
                 title: (items) => {
                   const idx = items[0].dataIndex;
-                  const item = chartSeries[idx];
-                  return `${item.dateBR} • ${item.serviceType}${item.isSimulated ? ' (Simulado)' : ''}`;
+                  const rec = data[idx];
+                  return `Culto de ${formatDateBR(rec.data)}${rec.isSimulated ? " (Simulação)" : ""}`;
                 },
-                label: (context) => {
-                  if (context.datasetIndex === 1) return null;
-                  const item = chartSeries[context.dataIndex];
-                  const lines = [`Público Total: ${item.count} pessoas`];
-
-                  if (item.diff !== null) {
-                    const sign = item.diff >= 0 ? '+' : '';
-                    lines.push(`Variação vs. anterior: ${sign}${item.diff} pessoas (${sign}${formatNumberBR(item.pct, 1)}%)`);
-                  } else {
-                    lines.push('Variação: Primeiro culto registrado');
+                afterBody: (items) => {
+                  const idx = items[0].dataIndex;
+                  const rec = data[idx];
+                  const lines = [`Responsável: ${rec.nome}`];
+                  if (hasSpecialNote(rec)) {
+                    lines.push(`Observação: ${rec.obs}`);
                   }
-
-                  lines.push(`Responsável: ${item.recorder}`);
-
-                  if (item.isSpecial) {
-                    lines.push(`Observação: ★ ${item.observation}`);
-                  } else {
-                    lines.push('Observação: Culto regular');
+                  if (rec.rawTotal && rec.rawTotal !== String(rec.total)) {
+                    lines.push(`Registro original: ${rec.rawTotal}`);
                   }
-
+                  if (idx > 0) {
+                    const prev = data[idx - 1].total;
+                    const diff = rec.total - prev;
+                    const pct = ((diff / prev) * 100).toFixed(1).replace(".", ",");
+                    const sign = diff >= 0 ? "+" : "";
+                    lines.push(`Variação vs. anterior: ${sign}${diff} (${sign}${pct}%)`);
+                  }
                   return lines;
                 }
               }
             }
           },
           scales: {
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                color: '#475569',
-                font: {
-                  family: 'Inter, sans-serif',
-                  size: 12,
-                  weight: '600'
-                }
-              }
-            },
             y: {
               beginAtZero: false,
-              suggestedMin: 105,
-              suggestedMax: Math.max(195, metrics.maxRecord.count + 15),
-              grid: {
-                color: '#f1f5f9'
-              },
+              suggestedMin: 100,
+              suggestedMax: 195,
+              grid: { color: "#edf2ef" },
               ticks: {
-                color: '#64748b',
-                font: {
-                  family: 'Inter, sans-serif',
-                  size: 12
-                },
-                callback: (value) => `${value}`
+                font: { family: "Inter", size: 12 },
+                color: "#556960"
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: {
+                font: { family: "Inter", size: 12, weight: "600" },
+                color: "#14221c"
               }
             }
           }
@@ -1053,384 +1425,185 @@
       });
     }
 
-    // Renderiza a Tabela Auditável de Registros
-    function renderTable() {
-      const tbody = document.getElementById('records-table-body');
-      const fullSeries = getFullChronologicalSeries();
-      const filteredList = getFilteredSeries();
+    function getFilteredTableRecords(fullData) {
+      const monthFilter = document.getElementById("filterMonth").value;
+      const catFilter = document.getElementById("filterCategory").value;
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
 
-      const maxCountInList = Math.max(...fullSeries.map(i => i.count), 181);
+      const enriched = fullData.map((item, idx) => {
+        const prev = idx > 0 ? fullData[idx - 1].total : null;
+        return { ...item, prevTotal: prev };
+      });
 
-      if (filteredList.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" class="py-10 px-6 text-center text-slate-500 text-sm">
-              Nenhum registro encontrado para os filtros selecionados.
-            </td>
-          </tr>
-        `;
-      } else {
-        tbody.innerHTML = filteredList.map(item => {
-          const widthPct = Math.min(100, Math.round((item.count / maxCountInList) * 100));
-
-          // Badge de variação
-          let variationBadge = '';
-          if (item.diff !== null) {
-            const sign = item.diff >= 0 ? '+' : '';
-            const badgeColor = item.diff > 0
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-              : item.diff < 0
-                ? 'bg-rose-50 text-rose-700 border-rose-200'
-                : 'bg-slate-100 text-slate-600 border-slate-200';
-            variationBadge = `
-              <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border ${badgeColor}">
-                ${sign}${item.diff} (${sign}${formatNumberBR(item.pct, 1)}%)
-              </span>
-            `;
-          } else {
-            variationBadge = `
-              <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-500">
-                Base inicial
-              </span>
-            `;
-          }
-
-          // Badge de Observação / Evento Especial
-          let observationBadge = '';
-          if (item.isSpecial) {
-            const isPositivePeak = item.count >= 160;
-            const obsStyle = isPositivePeak
-              ? 'bg-gold-100 text-gold-600 border-gold-400/50'
-              : 'bg-amber-100/80 text-amber-800 border-amber-300/70';
-            observationBadge = `
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${obsStyle}">
-                <span>${isPositivePeak ? '★' : '•'}</span>
-                <span>${item.observation}</span>
-              </span>
-            `;
-          } else {
-            observationBadge = `
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-500">
-                Culto regular
-              </span>
-            `;
-          }
-
-          const rowHighlight = item.isSimulated
-            ? 'bg-emerald-50/40'
-            : item.isSpecial
-              ? 'bg-gold-50/35 hover:bg-gold-50/60'
-              : 'hover:bg-slate-50/90';
-
-          const barColor = item.isSimulated
-            ? 'bg-emerald-500'
-            : item.isSpecial
-              ? 'bg-gold-500'
-              : 'bg-ipbut-700';
-
-          return `
-            <tr class="${rowHighlight} transition-colors">
-              <td class="py-3.5 px-4 sm:px-6 whitespace-nowrap">
-                <div class="font-semibold text-slate-900 flex items-center gap-2">
-                  <span>${item.dateBR}</span>
-                  ${item.isSimulated ? '<span class="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-emerald-100 text-emerald-800">Simulado</span>' : ''}
-                </div>
-              </td>
-              <td class="py-3.5 px-4 whitespace-nowrap text-xs sm:text-sm text-slate-600">
-                ${item.serviceType}
-              </td>
-              <td class="py-3.5 px-4 whitespace-nowrap">
-                <div class="flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-ipbut-100 text-ipbut-900 text-xs font-bold flex items-center justify-center shrink-0">
-                    ${item.recorder.charAt(0).toUpperCase()}
-                  </span>
-                  <span class="font-medium text-slate-800">${item.recorder}</span>
-                </div>
-              </td>
-              <td class="py-3.5 px-4">
-                <div class="flex items-center gap-3 min-w-[140px]">
-                  <span class="font-display font-bold text-base text-slate-900 w-9">
-                    ${item.count}
-                  </span>
-                  <div class="flex-1 max-w-[95px] h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full ${barColor} rounded-full transition-all duration-500" style="width: ${widthPct}%"></div>
-                  </div>
-                </div>
-              </td>
-              <td class="py-3.5 px-4 whitespace-nowrap">
-                ${variationBadge}
-              </td>
-              <td class="py-3.5 px-4 whitespace-nowrap">
-                ${observationBadge}
-              </td>
-              <td class="py-3.5 px-4 sm:px-6 whitespace-nowrap text-xs text-slate-500">
-                <div class="font-medium text-slate-700">${item.rawValue}</div>
-                <div class="font-mono text-[11px] text-slate-400">${item.timestamp}</div>
-              </td>
-            </tr>
-          `;
-        }).join('');
-      }
-
-      // Atualiza rodapé da tabela
-      const totalAvailable = fullSeries.length;
-      const sumFiltered = filteredList.reduce((acc, r) => acc + r.count, 0);
-      document.getElementById('table-footer-summary').textContent =
-        `Exibindo ${filteredList.length} de ${totalAvailable} cultos consolidados`;
-      document.getElementById('table-footer-total-sum').textContent =
-        `Soma do recorte: ${formatIntBR(sumFiltered)} presenças acumuladas`;
+      return enriched
+        .filter(item => {
+          const matchMonth = monthFilter === "all" || item.data.startsWith(monthFilter);
+          const isSpec = hasSpecialNote(item);
+          const matchCat =
+            catFilter === "all" ||
+            (catFilter === "special" && isSpec) ||
+            (catFilter === "regular" && !isSpec);
+          const matchQuery =
+            !query ||
+            item.nome.toLowerCase().includes(query) ||
+            formatDateBR(item.data).includes(query) ||
+            (item.obs && item.obs.toLowerCase().includes(query));
+          return matchMonth && matchCat && matchQuery;
+        })
+        .reverse();
     }
 
-    // Exporta os dados filtrados atuais em arquivo CSV UTF-8 com BOM (incluindo Observações)
-    function exportFilteredCSV() {
-      const series = getFilteredSeries();
-      if (!series.length) {
-        showToast('Nenhum registro visível para exportar.', 'info');
+    function renderTable(fullData) {
+      const tbody = document.getElementById("recordsTableBody");
+      const rows = getFilteredTableRecords(fullData);
+
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 24px;">Nenhum registro encontrado para os filtros aplicados.</td></tr>`;
         return;
       }
 
-      const headers = [
-        'Data',
-        'Dia/Periodo',
-        'Responsavel pela Contagem',
-        'Total de Pessoas',
-        'Variacao vs Anterior',
-        'Variacao (%)',
-        'Observacoes',
-        'Valor Bruto',
-        'Carimbo de Data/Hora'
-      ];
-
-      const rows = series.map(item => {
-        const diffStr = item.diff !== null ? item.diff : '0';
-        const pctStr = item.pct !== null ? formatNumberBR(item.pct, 1) + '%' : '0,0%';
-        const obsStr = item.observation || 'Culto regular';
-        return [
-          item.dateBR,
-          item.serviceType,
-          `"${item.recorder.replace(/"/g, '""')}"`,
-          item.count,
-          diffStr,
-          pctStr,
-          `"${obsStr.replace(/"/g, '""')}"`,
-          `"${item.rawValue.replace(/"/g, '""')}"`,
-          `"${item.timestamp}"`
-        ].join(';');
-      });
-
-      const csvContent = '\uFEFF' + [headers.join(';'), ...rows].join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'IPBut_Frequencia_Cultos_Atualizado_2026.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      showToast(`CSV exportado com ${series.length} registro(s) e coluna de Observações!`);
-    }
-
-    // Atualiza prévia dinâmica dentro do modal do simulador
-    function updateSimulatorPreview() {
-      const series = getFullChronologicalSeries();
-      const metrics = calculateMetrics(series);
-      const inputVal = Number(document.getElementById('sim-count').value) || 0;
-
-      const projectedTotal = metrics.totalSum + inputVal;
-      const projectedCount = metrics.count + 1;
-      const projectedAvg = projectedTotal / projectedCount;
-      const deltaAvg = projectedAvg - metrics.avg;
-      const sign = deltaAvg >= 0 ? '+' : '';
-
-      document.getElementById('sim-current-avg').textContent = formatNumberBR(metrics.avg, 1);
-      document.getElementById('sim-preview-avg').textContent = formatNumberBR(projectedAvg, 1);
-      const badge = document.getElementById('sim-preview-badge');
-      badge.textContent = `${sign}${formatNumberBR(deltaAvg, 1)} pessoas`;
-      badge.className = deltaAvg >= 0
-        ? 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800'
-        : 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800';
-    }
-
-    // Sincroniza estilo visual dos botões de ocorrência
-    function updateOccurrenceFilterUI() {
-      document.querySelectorAll('.occurrence-filter-btn').forEach(btn => {
-        const val = btn.getAttribute('data-occurrence');
-        if (val === appState.occurrenceFilter) {
-          btn.className = 'occurrence-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-ipbut-900 text-white shadow-2xs transition cursor-pointer';
-        } else {
-          btn.className = 'occurrence-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-200/70 transition cursor-pointer';
+      tbody.innerHTML = rows.map(rec => {
+        let varHtml = `<span class="badge badge-neutral">Início</span>`;
+        if (rec.prevTotal !== null) {
+          const diff = rec.total - rec.prevTotal;
+          const pct = ((diff / rec.prevTotal) * 100).toFixed(1).replace(".", ",");
+          const sign = diff >= 0 ? "+" : "";
+          const cls = diff >= 0 ? "badge-up" : "badge-down";
+          varHtml = `<span class="badge ${cls}">${sign}${diff} (${sign}${pct}%)</span>`;
         }
-      });
+
+        const isSpec = hasSpecialNote(rec);
+        let obsHtml = `<span class="badge badge-regular">Culto regular</span>`;
+        if (rec.isSimulated) {
+          obsHtml = `<span class="badge" style="background: var(--info-bg); color: var(--info);">Simulação projetada</span>`;
+        } else if (isSpec) {
+          obsHtml = `<span class="badge badge-special">${rec.obs}</span>`;
+        }
+
+        const rawNote = rec.rawTotal && rec.rawTotal !== String(rec.total)
+          ? `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">${rec.rawTotal}</div>`
+          : "";
+
+        return `
+          <tr class="${isSpec ? "row-special" : ""}">
+            <td><strong>${formatDateBR(rec.data)}</strong></td>
+            <td class="num-cell">${rec.total}${rawNote}</td>
+            <td>${varHtml}</td>
+            <td>${obsHtml}</td>
+            <td>${rec.nome}</td>
+          </tr>
+        `;
+      }).join("");
     }
 
-    // Re-renderiza todo o dashboard
-    function refreshDashboard() {
-      renderKPIs();
-      renderChart();
-      renderTable();
+    function renderAll() {
+      const fullData = getActiveDataset();
+      updateKPIs(fullData);
+      updateComparisonAndInsights(fullData);
+      renderChart(fullData);
+      renderTable(fullData);
     }
 
-    // Inicialização e Event Listeners
-    document.addEventListener('DOMContentLoaded', () => {
-      refreshDashboard();
-
-      // Alternar tipo de gráfico (Linha vs Barras)
-      const btnLine = document.getElementById('btn-chart-line');
-      const btnBar = document.getElementById('btn-chart-bar');
-
-      btnLine.addEventListener('click', () => {
-        appState.chartType = 'line';
-        btnLine.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-ipbut-900 shadow-xs transition cursor-pointer';
-        btnBar.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
-        renderChart();
-      });
-
-      btnBar.addEventListener('click', () => {
-        appState.chartType = 'bar';
-        btnBar.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-ipbut-900 shadow-xs transition cursor-pointer';
-        btnLine.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
-        renderChart();
-      });
-
-      // Alternar escopo do gráfico (Todos os Cultos vs Apenas Regulares)
-      const btnScopeAll = document.getElementById('btn-scope-all');
-      const btnScopeRegular = document.getElementById('btn-scope-regular');
-
-      btnScopeAll.addEventListener('click', () => {
-        appState.chartScope = 'all';
-        btnScopeAll.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-ipbut-900 shadow-xs transition cursor-pointer';
-        btnScopeRegular.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
-        renderChart();
-      });
-
-      btnScopeRegular.addEventListener('click', () => {
-        appState.chartScope = 'regular';
-        btnScopeRegular.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-ipbut-900 shadow-xs transition cursor-pointer';
-        btnScopeAll.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
-        renderChart();
-      });
-
-      // Botão no banner para filtrar apenas eventos especiais
-      document.getElementById('btn-filter-events-banner').addEventListener('click', () => {
-        appState.occurrenceFilter = 'special';
-        updateOccurrenceFilterUI();
-        refreshDashboard();
-        document.getElementById('tabela-section').scrollIntoView({ behavior: 'smooth' });
-        showToast('Filtrando cultos com observações e eventos especiais.');
-      });
-
-      // Filtro por tipo de ocorrência (Todos, Regulares, Eventos Especiais)
-      document.querySelectorAll('.occurrence-filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          appState.occurrenceFilter = btn.getAttribute('data-occurrence');
-          updateOccurrenceFilterUI();
-          refreshDashboard();
-        });
-      });
-
-      // Filtro por mês
-      document.querySelectorAll('.month-filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          appState.selectedMonth = btn.getAttribute('data-month');
-          document.querySelectorAll('.month-filter-btn').forEach(b => {
-            b.className = 'month-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/70 transition cursor-pointer';
-          });
-          btn.className = 'month-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-ipbut-900 text-white transition cursor-pointer';
-          refreshDashboard();
-        });
-      });
-
-      // Busca por responsável ou observação
-      const searchInput = document.getElementById('search-query');
-      const clearSearchBtn = document.getElementById('btn-clear-search');
-
-      searchInput.addEventListener('input', (e) => {
-        appState.searchQuery = e.target.value;
-        clearSearchBtn.classList.toggle('hidden', !appState.searchQuery);
-        refreshDashboard();
-      });
-
-      clearSearchBtn.addEventListener('click', () => {
-        appState.searchQuery = '';
-        searchInput.value = '';
-        clearSearchBtn.classList.add('hidden');
-        refreshDashboard();
-      });
-
-      // Exportação CSV
-      document.getElementById('btn-export-csv').addEventListener('click', exportFilteredCSV);
-
-      // Modal Simulador
-      const modal = document.getElementById('simulator-modal');
-      const openModalBtn = document.getElementById('btn-open-simulator');
-      const closeModalBtn = document.getElementById('btn-close-modal');
-      const cancelModalBtn = document.getElementById('btn-cancel-modal');
-      const resetSimBtn = document.getElementById('btn-reset-sim');
-      const simForm = document.getElementById('simulator-form');
-      const simCountInput = document.getElementById('sim-count');
-
-      function openModal() {
-        updateSimulatorPreview();
-        resetSimBtn.classList.toggle('hidden', appState.simulatedRecords.length === 0);
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      }
-
-      function closeModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-
-      openModalBtn.addEventListener('click', openModal);
-      closeModalBtn.addEventListener('click', closeModal);
-      cancelModalBtn.addEventListener('click', closeModal);
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-      });
-
-      simCountInput.addEventListener('input', updateSimulatorPreview);
-
-      simForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const dateISO = document.getElementById('sim-date').value;
-        const count = parseInt(document.getElementById('sim-count').value, 10);
-        const recorder = document.getElementById('sim-recorder').value.trim() || 'Simulação';
-        const observation = document.getElementById('sim-observation').value.trim();
-
-        if (!dateISO || isNaN(count) || count <= 0) return;
-
-        const dateBR = isoToBR(dateISO);
-        const month = dateISO.split('-')[1];
-
-        appState.simulatedRecords.push({
-          id: Date.now(),
-          dateISO,
-          dateBR,
-          month,
-          serviceType: 'Culto Dominical Matutino',
-          count,
-          recorder,
-          rawValue: `${count} (simulado)`,
-          timestamp: `${dateISO} 10:15:00`,
-          observation,
-          isSimulated: true
-        });
-
-        refreshDashboard();
-        closeModal();
-        showToast(`Simulação de ${count} pessoas em ${dateBR} adicionada ao painel.`);
-      });
-
-      resetSimBtn.addEventListener('click', () => {
-        appState.simulatedRecords = [];
-        refreshDashboard();
-        closeModal();
-        showToast('Simulações removidas. Dados originais restaurados.');
+    // =========================================================================
+    // EVENT LISTENERS E INTERAÇÕES
+    // =========================================================================
+    document.querySelectorAll("#chartTypeToggle button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#chartTypeToggle button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentChartType = btn.dataset.type;
+        renderChart(getActiveDataset());
       });
     });
+
+    document.querySelectorAll("#chartScopeToggle button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#chartScopeToggle button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentChartScope = btn.dataset.scope;
+        renderChart(getActiveDataset());
+      });
+    });
+
+    document.getElementById("filterMonth").addEventListener("change", () => renderTable(getActiveDataset()));
+    document.getElementById("filterCategory").addEventListener("change", () => renderTable(getActiveDataset()));
+    document.getElementById("searchInput").addEventListener("input", () => renderTable(getActiveDataset()));
+
+    document.getElementById("btnRefreshNow").addEventListener("click", () => {
+      loadLiveRecords();
+    });
+
+    document.getElementById("btnSaveCsvUrl").addEventListener("click", () => {
+      const val = document.getElementById("inputCsvUrl").value.trim();
+      if (!val || !val.startsWith("http")) {
+        alert("Cole um link válido iniciado com https://");
+        return;
+      }
+      localStorage.setItem("ipbut_csv_url", val);
+      loadLiveRecords();
+    });
+
+    document.getElementById("btnSimulate").addEventListener("click", () => {
+      const dateVal = document.getElementById("simDate").value;
+      const countVal = parseInt(document.getElementById("simCount").value, 10);
+      if (!dateVal || isNaN(countVal) || countVal <= 0) return;
+
+      simulatedEntry = {
+        timestamp: "Simulação",
+        nome: "Projeção",
+        data: dateVal,
+        tipo: "Culto Dominical Matutino",
+        evento: "",
+        total: countVal,
+        rawTotal: String(countVal),
+        obs: "",
+        isSimulated: true
+      };
+
+      const fullData = getActiveDataset();
+      const newAvg = (fullData.reduce((s, d) => s + d.total, 0) / fullData.length).toFixed(1).replace(".", ",");
+      const baseAvg = (BASE_RECORDS.reduce((s, d) => s + d.total, 0) / BASE_RECORDS.length).toFixed(1).replace(".", ",");
+
+      document.getElementById("simOutput").innerHTML =
+        `Com <strong>${countVal} pessoas</strong> em ${formatDateBR(dateVal)}, a média geral passa de <strong>${baseAvg}</strong> para <strong>${newAvg} pessoas/culto</strong>.`;
+      document.getElementById("btnResetSim").style.display = "inline-flex";
+      renderAll();
+    });
+
+    document.getElementById("btnResetSim").addEventListener("click", () => {
+      simulatedEntry = null;
+      document.getElementById("simOutput").textContent = "Informe uma projeção para calcular a nova média do período.";
+      document.getElementById("btnResetSim").style.display = "none";
+      renderAll();
+    });
+
+    document.getElementById("btnExportCsv").addEventListener("click", () => {
+      const rows = getFilteredTableRecords(getActiveDataset());
+      const header = ["Data", "Tipo", "Total de Pessoas", "Observacoes", "Responsavel"];
+      const csvLines = [
+        header.join(";"),
+        ...rows.map(r => [
+          formatDateBR(r.data),
+          `"${r.tipo}"`,
+          r.total,
+          `"${r.obs || ""}"`,
+          `"${r.nome}"`
+        ].join(";"))
+      ];
+      const blob = new Blob(["\uFEFF" + csvLines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ipbut_frequencia_dominical_atualizada.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Inicialização
+    populateMonthFilter();
+    updateDefaultSimDate();
+    renderAll();
+    loadLiveRecords();
   </script>
 </body>
 </html>
